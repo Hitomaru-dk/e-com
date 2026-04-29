@@ -75,10 +75,13 @@
                 <i class="fa fa-shopping-cart"></i>
               </a>
               <form class="form-inline">
-                <button class="btn  my-2 my-sm-0 nav_search-btn" type="submit">
+                <button class="btn  my-2 my-sm-0 nav_search-btn" type="button" id="searchBtn">
                   <i class="fa fa-search" aria-hidden="true"></i>
                 </button>
               </form>
+              <div class="search-dropdown" id="searchDropdown" style="display: none;">
+                <input type="text" class="nav_search-input" id="searchInput" placeholder="Search products...">
+              </div>
               <a href="" class="order_online">
                 Order Online
               </a>
@@ -226,6 +229,7 @@
   <script>
 let allProducts = [];
 let currentIndex = 0;
+let iso = null;
 const ITEMS_PER_PAGE = 9;
 const ITEMS_PER_LOAD = 9;
 
@@ -242,18 +246,19 @@ async function requestProducts() {
     }
 }
 
-function renderProducts() {
+function renderProducts(productsToShow = null) {
     const productGrid = document.querySelector('.row.grid');
     const btnBox = document.querySelector('.btn-box');
+    const products = productsToShow || allProducts;
     
-    if (currentIndex === 0) {
+    if (currentIndex === 0 || productsToShow) {
         productGrid.innerHTML = '';
     }
 
     const endIndex = currentIndex === 0 ? ITEMS_PER_PAGE : currentIndex + ITEMS_PER_LOAD;
     
-    for (let i = currentIndex; i < Math.min(endIndex, allProducts.length); i++) {
-        const product = allProducts[i];
+    for (let i = currentIndex; i < Math.min(endIndex, products.length); i++) {
+        const product = products[i];
         const productHTML = `
             <div class="col-sm-6 col-lg-4 all ${product.category}">
               <div class="box">
@@ -275,18 +280,24 @@ function renderProducts() {
         productGrid.insertAdjacentHTML('beforeend', productHTML);
     }
 
-    currentIndex = Math.min(endIndex, allProducts.length);
+    currentIndex = Math.min(endIndex, products.length);
 
-    if (currentIndex >= allProducts.length) {
+    if (productsToShow) {
+        btnBox.style.display = 'none';
+    } else if (currentIndex >= allProducts.length) {
         btnBox.style.display = 'none';
     } else {
         btnBox.style.display = 'block';
     }
     
-    // Reinitialize Isotope for filtering
+    initIsotope();
+}
+
+function initIsotope() {
     if (typeof Isotope !== 'undefined') {
         setTimeout(() => {
-            const iso = new Isotope('.row.grid', { itemSelector: '.all', percentPosition: true });
+            iso = new Isotope('.row.grid', { itemSelector: '.all', percentPosition: true });
+            
             const filterItems = document.querySelectorAll('.filters_menu li');
             filterItems.forEach(item => {
                 item.addEventListener('click', function() {
@@ -300,14 +311,115 @@ function renderProducts() {
     }
 }
 
+function filterProducts(searchTerm, category) {
+    const lowerSearch = searchTerm.toLowerCase().trim();
+    
+    return allProducts.filter(product => {
+        const matchesName = product.title.toLowerCase().includes(lowerSearch);
+        const matchesCategory = (category === 'All' || product.category === category);
+        return matchesName && matchesCategory;
+    });
+}
+
+function searchProducts() {
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput.value.trim();
+    const activeFilter = document.querySelector('.filters_menu li.active');
+    const activeCategory = activeFilter ? activeFilter.getAttribute('data-filter').replace('.', '') : 'All';
+    
+    if (searchTerm === '') {
+        currentIndex = 0;
+        renderProducts();
+        return;
+    }
+    
+    const filtered = filterProducts(searchTerm, activeCategory);
+    
+    if (filtered.length === 0) {
+        // แสดงสินค้าที่ใกล้เคียง
+        const similar = allProducts.filter(product => {
+            const lowerSearch = searchTerm.toLowerCase();
+            const titleWords = product.title.toLowerCase().split(' ');
+            return titleWords.some(word => word.includes(lowerSearch.substring(0, 3)));
+        });
+        
+        currentIndex = 0;
+        renderProducts(similar.length > 0 ? similar : []);
+        
+        if (similar.length === 0) {
+            alert('ไม่พบสินค้าที่ค้นหา');
+        }
+    } else {
+        currentIndex = 0;
+        renderProducts(filtered);
+    }
+}
+
+function liveSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput.value.trim();
+    const activeFilter = document.querySelector('.filters_menu li.active');
+    const activeCategory = activeFilter ? activeFilter.getAttribute('data-filter').replace('.', '') : 'All';
+    
+    if (searchTerm === '') {
+        currentIndex = 0;
+        renderProducts();
+        return;
+    }
+    
+    const filtered = filterProducts(searchTerm, activeCategory);
+    
+    if (filtered.length === 0) {
+        // แสดงสินค้าที่ใกล้เคียง
+        const similar = allProducts.filter(product => {
+            const lowerSearch = searchTerm.toLowerCase();
+            const titleWords = product.title.toLowerCase().split(' ');
+            return titleWords.some(word => word.includes(lowerSearch.substring(0, 3)));
+        });
+        
+        currentIndex = 0;
+        renderProducts(similar.length > 0 ? similar : []);
+    } else {
+        currentIndex = 0;
+        renderProducts(filtered);
+    }
+}
+
 document.querySelector('.btn-box a').addEventListener('click', function(e) {
     e.preventDefault();
     renderProducts();
 });
 
+document.getElementById('searchBtn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const dropdown = document.getElementById('searchDropdown');
+    if (dropdown.style.display === 'none') {
+        dropdown.style.display = 'block';
+        document.getElementById('searchInput').focus();
+    } else {
+        searchProducts();
+    }
+});
+
+document.getElementById('searchDropdown').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+
+document.addEventListener('click', function() {
+    const dropdown = document.getElementById('searchDropdown');
+    dropdown.style.display = 'none';
+});
+
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchProducts();
+    }
+});
+
+document.getElementById('searchInput').addEventListener('input', liveSearch);
+
 requestProducts();
 </script>
-
 
 </body>
 

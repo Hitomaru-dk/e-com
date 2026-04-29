@@ -192,6 +192,33 @@ a:focus {
   color: #ffbe33;
 }
 
+.custom_nav-container .nav_search-input {
+  padding: 8px 12px;
+  border: 2px solid #ffbe33;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #0c0c0c;
+  outline: none;
+  width: 200px;
+}
+
+.custom_nav-container .nav_search-input::placeholder {
+  color: #666666;
+}
+
+.custom_nav-container .nav_search-input:focus {
+  border-color: #ffbe33;
+  box-shadow: 0 0 5px rgba(255, 190, 51, 0.5);
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  z-index: 1000;
+}
+
 .user_option {
   display: -webkit-box;
   display: -ms-flexbox;
