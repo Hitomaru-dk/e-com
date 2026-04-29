@@ -1,0 +1,165 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "category": "pizza",
+      "image": "images/f1.png",
+      "title": "Delicious Pizza",
+      "description": "Veniam debitis quaerat officiis quasi cupiditate quo, hic quibusdam recusandae qui velit.",
+      "price": 20
+    },
+    {
+      "id": 2,
+      "category": "burger",
+      "image": "images/f2.png",
+      "title": "Delicious Burger",
+      "description": "Veniam debitis quaerat officiis quasi cupiditate quo, hic quibusdam recusandae qui velit.",
+      "price": 15
+    },
+    {
+      "id": 3,
+      "category": "pizza",
+      "image": "images/f3.png",
+      "title": "Delicious Pizza",
+      "description": "Veniam debitis quaerat officiis quasi cupiditate quo, hic quibusdam recusandae qui velit.",
+      "price": 17
+    },
+    {
+      "id": 4,
+      "category": "pasta",
+      "image": "images/f4.png",
+      "title": "Delicious Pasta",
+      "description": "Veniam debitis quaerat officiis quasi cupiditate quo, hic quibusdam recusandae qui velit.",
+      "price": 18
+    },
+    {
+      "id": 5,
+      "category": "fries",
+      "image": "images/f5.png",
+      "title": "French Fries",
+      "description": "Veniam debitis quaerat officiis quasi cupiditate quo, hic quibusdam recusandae qui velit.",
+      "price": 10
+    },
+    {
+      "id": 6,
+      "category": "pizza",
+      "image": "images/f6.png",
+      "title": "Delicious Pizza",
+      "description": "Veniam debitis quaerat officiis quasi cupiditate quo, hic quibusdam recusandae qui velit.",
+      "price": 15
+    },
+    {
+      "id": 7,
+      "category": "burger",
+      "image": "images/f7.png",
+      "title": "Tasty Burger",
+      "description": "Veniam debitis quaerat officiis quasi cupiditate quo, hic quibusdam recusandae qui velit.",
+      "price": 12
+    },
+    {
+      "id": 8,
+      "category": "burger",
+      "image": "images/f8.png",
+      "title": "Tasty Burger",
+      "description": "Veniam debitis quaerat officiis quasi cupiditate quo, hic quibusdam recusandae qui velit.",
+      "price": 14
+    },
+    {
+      "id": 9,
+      "category": "pasta",
+      "image": "images/f9.png",
+      "title": "Delicious Pasta",
+      "description": "Veniam debitis quaerat officiis quasi cupiditate quo, hic quibusdam recusandae qui velit.",
+      "price": 10
+    },
+    {
+      "id": 10,
+      "category": "pizza",
+      "image": "images/f1.png",
+      "title": "Margherita Pizza",
+      "description": "Classic Italian pizza with fresh tomatoes and mozzarella cheese.",
+      "price": 19
+    },
+    {
+      "id": 11,
+      "category": "burger",
+      "image": "images/f2.png",
+      "title": "Cheese Burger",
+      "description": "Juicy beef patty topped with melted cheddar and fresh lettuce.",
+      "price": 16
+    },
+    {
+      "id": 12,
+      "category": "pizza",
+      "image": "images/f3.png",
+      "title": "Pepperoni Feast",
+      "description": "Loaded with spicy pepperoni and high-quality mozzarella.",
+      "price": 22
+    },
+    {
+      "id": 13,
+      "category": "pasta",
+      "image": "images/f4.png",
+      "title": "Spaghetti Carbonara",
+      "description": "Traditional pasta with creamy egg sauce and crispy bacon.",
+      "price": 21
+    },
+    {
+      "id": 14,
+      "category": "fries",
+      "image": "images/f5.png",
+      "title": "Curly Fries",
+      "description": "Perfectly seasoned spiral-cut potatoes fried to a golden crisp.",
+      "price": 11
+    },
+    {
+      "id": 15,
+      "category": "pizza",
+      "image": "images/f6.png",
+      "title": "Vegetarian Delight",
+      "description": "Fresh bell peppers, olives, and onions on a thin crust.",
+      "price": 18
+    },
+    {
+      "id": 16,
+      "category": "burger",
+      "id_alt": "B-001",
+      "image": "images/f7.png",
+      "title": "Double Stack Burger",
+      "description": "Two premium beef patties for the ultimate hunger satisfaction.",
+      "price": 24
+    },
+    {
+      "id": 17,
+      "category": "burger",
+      "image": "images/f8.png",
+      "title": "Bacon BBQ Burger",
+      "description": "Smoky BBQ sauce meets crispy bacon on a toasted bun.",
+      "price": 17
+    },
+    {
+      "id": 18,
+      "category": "pasta",
+      "image": "images/f9.png",
+      "title": "Pesto Penne",
+      "description": "Fresh basil pesto tossed with perfectly al dente penne pasta.",
+      "price": 19
+    },
+    {
+      "id": 19,
+      "category": "fries",
+      "image": "images/f5.png",
+      "title": "Cheesy Fries",
+      "description": "Golden fries smothered in a rich, warm cheese sauce.",
+      "price": 13
+    },
+    {
+      "id": 20,
+      "category": "pizza",
+      "image": "images/f1.png",
+      "title": "Hawaiian Pizza",
+      "description": "The controversial classic with sweet pineapple and savory ham.",
+      "price": 20
+    }
+  ]
+}
