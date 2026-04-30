@@ -271,7 +271,7 @@ function renderProducts(productsToShow = null) {
                     <p>${product.description}</p>
                     <div class="options">
                       <h6>$${product.price}</h6>
-                      <a href=""><i class="fa fa-shopping-cart"></i></a>
+                      <a href="#" class="add-to-cart" data-id="${product.id}" data-title="${product.title}" data-price="${product.price}" data-image="${product.image}"><i class="fa fa-shopping-cart"></i></a>
                     </div>
                   </div>
                 </div>
@@ -291,6 +291,9 @@ function renderProducts(productsToShow = null) {
     }
     
     initIsotope();
+    if (typeof setupStaticCartButtons === 'function') {
+        setupStaticCartButtons();
+    }
 }
 
 function initIsotope() {
