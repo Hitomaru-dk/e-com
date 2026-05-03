@@ -1,0 +1,22 @@
+[
+  {"id":1,"name":"Chicken Burger","price":150,"category":"burger","image":"images/f1.png","description":"Crispy fried chicken with fresh vegetables"},
+  {"id":2,"name":"Beef Burger","price":180,"category":"burger","image":"images/f2.png","description":"Juicy beef patty with cheese and pickles"},
+  {"id":3,"name":"Margherita Pizza","price":250,"category":"pizza","image":"images/f3.png","description":"Classic tomato sauce with fresh mozzarella"},
+  {"id":4,"name":"Pepperoni Pizza","price":280,"category":"pizza","image":"images/f4.png","description":"Loaded with pepperoni and melted cheese"},
+  {"id":5,"name":"Pasta Carbonara","price":200,"category":"pasta","image":"images/f5.png","description":"Creamy sauce with bacon and parmesan"},
+  {"id":6,"name":"Veggie Wrap","price":130,"category":"wrap","image":"images/f6.png","description":"Fresh vegetables wrapped in soft tortilla"},
+  {"id":7,"name":"BBQ Burger","price":190,"category":"burger","image":"images/f7.png","description":"Smoky BBQ sauce with crispy onion rings"},
+  {"id":8,"name":"Hawaiian Pizza","price":270,"category":"pizza","image":"images/f8.png","description":"Ham and pineapple with mozzarella cheese"},
+  {"id":9,"name":"Spaghetti Bolognese","price":220,"category":"pasta","image":"images/f9.png","description":"Rich meat sauce with fresh spaghetti"},
+  {"id":10,"name":"Chicken Wrap","price":140,"category":"wrap","image":"images/f1.png","description":"Grilled chicken with lettuce and mayo"},
+  {"id":11,"name":"Double Burger","price":210,"category":"burger","image":"images/f2.png","description":"Double patty with extra cheese and sauce"},
+  {"id":12,"name":"Veggie Pizza","price":240,"category":"pizza","image":"images/f3.png","description":"Fresh vegetables on tomato base"},
+  {"id":13,"name":"Penne Arrabbiata","price":190,"category":"pasta","image":"images/f4.png","description":"Spicy tomato sauce with penne pasta"},
+  {"id":14,"name":"Tuna Wrap","price":150,"category":"wrap","image":"images/f5.png","description":"Fresh tuna with cucumber and lettuce"},
+  {"id":15,"name":"Mushroom Burger","price":170,"category":"burger","image":"images/f6.png","description":"Grilled mushroom with swiss cheese"},
+  {"id":16,"name":"BBQ Chicken Pizza","price":290,"category":"pizza","image":"images/f7.png","description":"BBQ sauce with grilled chicken pieces"},
+  {"id":17,"name":"Fettuccine Alfredo","price":210,"category":"pasta","image":"images/f8.png","description":"Creamy white sauce with fettuccine"},
+  {"id":18,"name":"Beef Wrap","price":160,"category":"wrap","image":"images/f9.png","description":"Seasoned beef with salsa and cheese"},
+  {"id":19,"name":"Crispy Chicken Burger","price":165,"category":"burger","image":"images/f1.png","description":"Extra crispy chicken with coleslaw"},
+  {"id":20,"name":"Four Cheese Pizza","price":300,"category":"pizza","image":"images/f2.png","description":"Blend of four premium cheeses"}
+]
