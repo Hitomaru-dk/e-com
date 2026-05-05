@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <link rel="shortcut icon" href="images/favicon.png" type="">
+  <title>Feane — Login</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="css/responsive.css" rel="stylesheet" />
+  <style>
+    .login_section {
+      min-height: 100vh;
+      background-color: #f8f8f8;
+      display: flex;
+      align-items: center;
+      padding: 80px 0 40px;
+    }
+    .login_box {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+      padding: 48px 40px 40px;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+    .login_box .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .login_box .brand span {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.4rem;
+      font-weight: bold;
+      color: #ffbe33;
+    }
+    .login_box h4 {
+      text-align: center;
+      font-weight: 700;
+      color: #0c0c0c;
+      margin-bottom: 8px;
+    }
+    .login_box .subtitle {
+      text-align: center;
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .login_box .form-control {
+      border-radius: 8px;
+      border: 1.5px solid #e0e0e0;
+      padding: 12px 16px;
+      font-size: 15px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    .login_box .form-control:focus {
+      border-color: #ffbe33;
+      box-shadow: 0 0 0 3px rgba(255,190,51,0.15);
+    }
+    .login_box .input-group {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .login_box .input-group .form-control {
+      margin-bottom: 0;
+      padding-right: 44px;
+    }
+    .login_box .input-group .toggle-pw {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #aaa;
+      z-index: 10;
+    }
+    .login_box .input-group .toggle-pw:hover { color: #ffbe33; }
+    .login_box label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 6px;
+    }
+    .btn-login {
+      width: 100%;
+      background-color: #ffbe33;
+      color: #0c0c0c;
+      font-weight: 700;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      margin-top: 8px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-login:hover {
+      background-color: #e6a800;
+      transform: translateY(-1px);
+    }
+    .btn-login:active { transform: translateY(0); }
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .error-msg {
+      display: none;
+      background: #fff0f0;
+      border: 1px solid #ffcccc;
+      color: #c0392b;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #888;
+    }
+    .back-link a { color: #ffbe33; font-weight: 600; text-decoration: none; }
+    .back-link a:hover { text-decoration: underline; }
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid #0c0c0c;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- header -->
+  <header class="header_section" style="position:fixed;top:0;width:100%;z-index:999;">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg custom_nav-container">
+        <a class="navbar-brand" href="index.html"><span>Feane</span></a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="menu.html">Menu</a></li>
+            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="book.html">Book Table</a></li>
+          </ul>
+          <div class="user_option">
+            <a href="login.html" class="user_link" id="userIconLink">
+                <i class="fa fa-user" aria-hidden="true"></i>
+              </a>
+              <span id="userGreeting" style="font-size:14px;margin-left:6px;"></span>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- login section -->
+  <section class="login_section">
+    <div class="container">
+      <div class="login_box">
+        <div class="brand"><span>Feane</span></div>
+        <h4>Welcome Back</h4>
+        <p class="subtitle">Sign in to your account</p>
+
+        <div>
+          <label for="username">Email address</label>
+          <input type="email" id="username" class="form-control" placeholder="you@example.com" autocomplete="email" />
+        </div>
+
+        <div>
+          <label for="password">Password</label>
+          <div class="input-group">
+            <input type="password" id="password" class="form-control" placeholder="Enter your password" autocomplete="current-password" />
+            <span class="toggle-pw" onclick="togglePassword()">
+              <i class="fa fa-eye" id="pw-icon"></i>
+            </span>
+          </div>
+        </div>
+
+        <button class="btn-login" id="loginBtn" onclick="doLogin()">Sign In</button>
+        <div class="error-msg" id="errorMsg"></div>
+
+        <p class="back-link">
+          Don't have an account? <a href="register.html">Create one</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script>
+    function togglePassword() {
+      const pw = document.getElementById('password');
+      const icon = document.getElementById('pw-icon');
+      if (pw.type === 'password') {
+        pw.type = 'text';
+        icon.className = 'fa fa-eye-slash';
+      } else {
+        pw.type = 'password';
+        icon.className = 'fa fa-eye';
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function hideError() {
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    async function doLogin() {
+      hideError();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('loginBtn');
+
+      if (!username || !password) {
+        showError('Please enter your email and password.');
+        return;
+      }
+
+      // Loading state
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Signing in...';
+
+      try {
+        const res = await fetch('http://localhost:3000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          // Save user to localStorage
+          localStorage.setItem('feane_user', JSON.stringify(data.data));
+          // Redirect to profile
+          window.location.href = 'profile.html';
+        } else {
+          showError(data.message || 'Login failed. Please try again.');
+          btn.disabled = false;
+          btn.innerHTML = 'Sign In';
+        }
+      } catch (err) {
+        showError('Cannot connect to server. Make sure backend is running on port 3000.');
+        btn.disabled = false;
+        btn.innerHTML = 'Sign In';
+      }
+    }
+
+    // Enter key support
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') doLogin();
+    });
+  </script>
+
+  <!-- User greeting script -->
+  <script>
+    (function() {
+      var raw = localStorage.getItem('feane_user');
+      var link = document.getElementById('userIconLink');
+      var greeting = document.getElementById('userGreeting');
+      if (raw) {
+        var user = JSON.parse(raw);
+        if (link) { link.href = 'profile.html'; link.style.color = '#ffbe33'; }
+        if (greeting) {
+          greeting.innerHTML = 'Hello! <a href="profile.html" style="color:#ffbe33;font-weight:700;text-decoration:none;">' + user.first_name + '</a>';
+        }
+      } else {
+        if (link) { link.href = 'login.html'; link.style.color = '#ffffff'; }
+        if (greeting) {
+          greeting.innerHTML = '<a href="login.html" style="color:#ffffff;font-weight:600;text-decoration:none;">Login</a>';
+        }
+      }
+    })();
+  </script>
+  <script src="js/auth-nav.js"></script>
+</body>
+</html>

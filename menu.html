@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -68,9 +68,10 @@
               </li>
             </ul>
             <div class="user_option">
-              <a href="" class="user_link">
+              <a href="login.html" class="user_link" id="userIconLink">
                 <i class="fa fa-user" aria-hidden="true"></i>
               </a>
+              <span id="userGreeting" style="font-size:14px;margin-left:6px;"></span>
               <a class="cart_link" href="#">
                 <i class="fa fa-shopping-cart"></i>
               </a>
@@ -423,6 +424,28 @@ document.getElementById('searchInput').addEventListener('input', liveSearch);
 requestProducts();
 </script>
 
+
+  <!-- User greeting script -->
+  <script>
+    (function() {
+      var raw = localStorage.getItem('feane_user');
+      var link = document.getElementById('userIconLink');
+      var greeting = document.getElementById('userGreeting');
+      if (raw) {
+        var user = JSON.parse(raw);
+        if (link) { link.href = 'profile.html'; link.style.color = '#ffbe33'; }
+        if (greeting) {
+          greeting.innerHTML = 'Hello! <a href="profile.html" style="color:#ffbe33;font-weight:700;text-decoration:none;">' + user.first_name + '</a>';
+        }
+      } else {
+        if (link) { link.href = 'login.html'; link.style.color = '#ffffff'; }
+        if (greeting) {
+          greeting.innerHTML = '<a href="login.html" style="color:#ffffff;font-weight:600;text-decoration:none;">Login</a>';
+        }
+      }
+    })();
+  </script>
+  <script src="js/auth-nav.js"></script>
 </body>
 
 </html>

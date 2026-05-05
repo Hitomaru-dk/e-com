@@ -1,0 +1,62 @@
+[
+  {
+    "username": "alice.smith@example.com",
+    "password": "d68990e2a64a4f16d3ce16cdfbae1303",
+    "first_name": "Alice",
+    "date_of_registration": "2024-10-16"
+  },
+  {
+    "username": "bob.jones@example.com",
+    "password": "503b85656b336754c94c6f76e4ef9cc6",
+    "first_name": "Bob",
+    "date_of_registration": "2023-04-25"
+  },
+  {
+    "username": "carol.white@example.com",
+    "password": "afe0ff8f8e83b8146f0e3f6bc3863e5b",
+    "first_name": "Carol",
+    "date_of_registration": "2023-01-26"
+  },
+  {
+    "username": "david.brown@example.com",
+    "password": "8f873795f97bb2af5b93c49a3975e97d",
+    "first_name": "David",
+    "date_of_registration": "2023-10-09"
+  },
+  {
+    "username": "emma.davis@example.com",
+    "password": "a756301d4b5ae8cf9bca8866cb809a96",
+    "first_name": "Emma",
+    "date_of_registration": "2023-09-08"
+  },
+  {
+    "username": "frank.miller@example.com",
+    "password": "2188d1e8f082068e7109f2a1e093db7a",
+    "first_name": "Frank",
+    "date_of_registration": "2023-08-17"
+  },
+  {
+    "username": "grace.wilson@example.com",
+    "password": "dcd9b1b0b54c695dbefe9b6963706cf3",
+    "first_name": "Grace",
+    "date_of_registration": "2023-05-23"
+  },
+  {
+    "username": "henry.moore@example.com",
+    "password": "7ea9bbb9cf65b6b688b0c94fbd414833",
+    "first_name": "Henry",
+    "date_of_registration": "2023-04-15"
+  },
+  {
+    "username": "iris.taylor@example.com",
+    "password": "3a07eb40405238530d7dc1b2d3a528ca",
+    "first_name": "Iris",
+    "date_of_registration": "2024-11-23"
+  },
+  {
+    "username": "jack.anderson@example.com",
+    "password": "fa6ff8a5c7df175617e5af0f85ccaca2",
+    "first_name": "Jack",
+    "date_of_registration": "2024-07-12"
+  }
+]
