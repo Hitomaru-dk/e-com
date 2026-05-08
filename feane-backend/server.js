@@ -1,7 +1,6 @@
 /**
- * server.js — Express app entry point
- * Connects to store.db on startup via database.js,
- * then mounts all API routes.
+ * server.js — Express entry point (ไม่เปลี่ยน interface เลย)
+ * ทุก route ยังคง URL เดิม — frontend ไม่ต้องแก้ไขอะไร
  */
 
 const express        = require('express');
@@ -13,9 +12,7 @@ const checkoutRoutes = require('./routes/checkout');
 const app  = express();
 const PORT = 3000;
 
-// Connect to SQLite (store.db) — runs CREATE TABLE IF NOT EXISTS on startup
-// Must be required before any route that uses the db
-require('./database');
+require('./database'); // init SQLite tables on startup
 
 app.use(cors());
 app.use(express.json());
@@ -24,10 +21,6 @@ app.use('/api/products', productRoutes);
 app.use('/api/auth',     authRoutes);
 app.use('/api/checkout', checkoutRoutes);
 
-app.get('/', (req, res) => {
-  res.send('Backend Server is Running!');
-});
+app.get('/', (_req, res) => res.send('Backend is running!'));
 
-app.listen(PORT, () => {
-  console.log(`Server is active on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server active → http://localhost:${PORT}`));

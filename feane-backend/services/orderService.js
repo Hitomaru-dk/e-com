@@ -1,117 +1,115 @@
 /**
- * orderService.js — SQL INSERT logic for saving orders
+ * services/orderService.js
  *
- * Act as a Database Administrator:
- * This service writes an order to store.db using parameterized SQL.
- * It inserts into TWO tables inside db.serialize() so they run in sequence:
- *   1. orders      → saves user_id, total_price, email, card_last4
- *   2. order_items → saves product_id, quantity, price for each cart item
+ * Service Layer — Business Logic ของ checkout และ orders
+ * - Validation rules (cart, email, card)
+ * - คำนวณ total
+ * - สร้าง order object ก่อนส่งให้ repository บันทึก
  *
- * Parameterized queries (?) prevent SQL injection attacks.
+ * ก่อนหน้านี้ logic เหล่านี้อยู่กระจัดกระจายใน routes/checkout.js
+ * ซึ่งทำให้ทดสอบแยกไม่ได้และ route ใหญ่เกินไป
  */
 
-const db = require('../database');
+const orderRepository = require('../repositories/orderRepository');
+
+// ─── Validation Rules ─────────────────────────────────────────────────────────
+
+const validateCartItems = (items) => {
+  if (!Array.isArray(items) || items.length === 0)
+    return 'Cart is empty. Please add items before checking out.';
+  for (const item of items) {
+    if (!item.name || typeof item.price !== 'number' || item.price <= 0)
+      return 'One or more cart items are invalid (missing name or price).';
+  }
+  return null;
+};
+
+const validateEmail = (email) => {
+  if (!email || typeof email !== 'string') return 'Email is required.';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+    return 'Invalid email format. Please enter a valid email address.';
+  return null;
+};
+
+const validateCardNumber = (cardNumber) => {
+  if (!cardNumber || typeof cardNumber !== 'string')
+    return 'Credit card number is required.';
+  const digits = cardNumber.replace(/[\s\-]/g, '');
+  if (!/^\d{16}$/.test(digits))
+    return 'Credit card number must be exactly 16 digits.';
+  return null;
+};
+
+// ─── Business Logic ───────────────────────────────────────────────────────────
 
 /**
- * saveOrder — inserts a full order into store.db
- *
- * SQL INSERT #1 (orders table):
- *   INSERT INTO orders (user_id, product_id, quantity, total_price)
- *
- * SQL INSERT #2 (order_items table):
- *   INSERT INTO order_items (order_id, product_id, quantity, price)
- *
- * @param {Object} orderData
- * @param {number} orderData.user_id     - FK → users.id  (Relational Logic!)
- * @param {number} orderData.total_price - Total price of the order
- * @param {string} orderData.card_last4  - Last 4 digits of card
- * @param {string} orderData.email       - Customer email
- * @param {Array}  orderData.items       - [{ product_id, quantity, price }]
- *
- * @returns {Promise<{ success: boolean, order_id?: number, message?: string }>}
+ * คำนวณ total จาก cart items
+ * @param {Array} items
+ * @returns {number}
  */
-const saveOrder = (orderData) => {
-  return new Promise((resolve, reject) => {
-    const { user_id, total_price, card_last4, email, items } = orderData;
-
-    // db.serialize() runs all statements inside sequentially (not in parallel)
-    db.serialize(() => {
-
-      // ── SQL INSERT #1: Save the order header ──────────────────────────────
-      // This is the main INSERT with user_id, product_id, quantity, total_price
-      // as specified in the prompt. user_id links this order to the users table.
-      const insertOrderSQL = `
-        INSERT INTO orders (user_id, total_price, card_last4, email, order_date)
-        VALUES (?, ?, ?, ?, DATE('now'))
-      `;
-
-      //                           ↓ user_id  ↓ total_price  ↓ card_last4  ↓ email
-      db.run(insertOrderSQL, [user_id, total_price, card_last4, email], function (err) {
-        if (err) {
-          // INSERT failed → reject so the route returns 400 (cart kept on frontend)
-          return reject(new Error('Failed to save order: ' + err.message));
-        }
-
-        // this.lastID = auto-generated primary key of the new order row
-        const newOrderId = this.lastID;
-        console.log(`Order #${newOrderId} saved — user_id: ${user_id}, total: ${total_price}`);
-
-        // ── SQL INSERT #2: Save each cart item into order_items ──────────────
-        // Links back to the order via order_id (FK) and to the product via product_id (FK)
-        const insertItemSQL = `
-          INSERT INTO order_items (order_id, product_id, quantity, price)
-          VALUES (?, ?, ?, ?)
-        `;
-        //                              ↑ order_id   ↑ product_id  ↑ quantity  ↑ price
-
-        // Use a prepared statement for multiple inserts (faster than calling db.run() in a loop)
-        const stmt = db.prepare(insertItemSQL);
-
-        for (const item of items) {
-          stmt.run([newOrderId, item.product_id, item.quantity, item.price]);
-        }
-
-        // Finalize closes the prepared statement and flushes all pending writes
-        stmt.finalize((finalErr) => {
-          if (finalErr) {
-            return reject(new Error('Failed to save order items: ' + finalErr.message));
-          }
-          // All done — resolve with the new order id
-          resolve({ success: true, order_id: newOrderId });
-        });
-      });
-    });
-  });
+const calculateTotal = (items) => {
+  const total = items.reduce((sum, item) => {
+    const qty = item.quantity && item.quantity > 0 ? item.quantity : 1;
+    return sum + item.price * qty;
+  }, 0);
+  return Math.round(total * 100) / 100;
 };
 
 /**
- * getOrdersByUser — SELECT orders by user_id (JOIN with order_items)
- * Shows how user_id acts as the relational bridge between users and orders.
+ * ประมวลผล checkout ทั้งกระบวนการ
+ * 1. Validate inputs
+ * 2. คำนวณ total
+ * 3. บันทึกผ่าน repository
  *
+ * @param {{ cartItems: Array, email: string, cardNumber: string }} payload
+ * @returns {Promise<{ success: boolean, order?: Object, errors?: Object }>}
+ */
+const processCheckout = async (payload) => {
+  const { cartItems, email, cardNumber } = payload;
+
+  // ─── Validation ──────────────────────────────────────────────────────
+  const errors = {};
+  const cartErr = validateCartItems(cartItems);  if (cartErr) errors.cartItems  = cartErr;
+  const emailErr = validateEmail(email);          if (emailErr) errors.email     = emailErr;
+  const cardErr  = validateCardNumber(cardNumber); if (cardErr)  errors.cardNumber = cardErr;
+
+  if (Object.keys(errors).length > 0)
+    return { success: false, errors };
+
+  // ─── Build + Save ─────────────────────────────────────────────────────
+  const total    = calculateTotal(cartItems);
+  const cardLast4 = cardNumber.replace(/[\s\-]/g, '').slice(-4);
+
+  // Repository รับผิดชอบการบันทึกลง DB
+  const { order_id } = await orderRepository.create({
+    user_id:     1,           // TODO: ดึงจาก JWT session เมื่อ implement auth
+    total_price: total,
+    card_last4:  cardLast4,
+    email:       email.trim(),
+    items:       cartItems.map(item => ({
+      product_id: item.id || 0,
+      quantity:   item.quantity || 1,
+      price:      item.price
+    }))
+  });
+
+  return {
+    success: true,
+    order: {
+      id:    order_id,
+      email: email.trim(),
+      total,
+      items: cartItems,
+      date:  new Date().toISOString()
+    }
+  };
+};
+
+/**
+ * ดึง orders ของ user คนหนึ่ง
  * @param {number} user_id
  * @returns {Promise<Array>}
  */
-const getOrdersByUser = (user_id) => {
-  return new Promise((resolve, reject) => {
-    const sql = `
-      SELECT
-        o.id          AS order_id,
-        o.user_id,
-        o.total_price,
-        o.order_date,
-        oi.product_id,
-        oi.quantity,
-        oi.price      AS item_price
-      FROM   orders o
-      JOIN   order_items oi ON oi.order_id = o.id
-      WHERE  o.user_id = ?
-      ORDER  BY o.order_date DESC
-    `;
-    db.all(sql, [user_id], (err, rows) => {
-      if (err) return reject(new Error(err.message));
-      resolve(rows);
-    });
-  });
-};
+const getOrdersByUser = (user_id) => orderRepository.findByUserId(user_id);
 
-module.exports = { saveOrder, getOrdersByUser };
+module.exports = { processCheckout, getOrdersByUser };
