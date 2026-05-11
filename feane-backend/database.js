@@ -13,7 +13,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path    = require('path');
 
 // store.db lives in feane-backend/ next to server.js
-const DB_PATH = path.join(__dirname, 'store.db');
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'store.db');
 
 /**
  * Open or create store.db.
