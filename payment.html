@@ -232,14 +232,22 @@
       vertical-align: middle; margin-right: 6px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── header dark fix ── */
+    .header_section { background: #0c0c0c !important; }
+    .custom_nav-container .navbar-nav .nav-item .nav-link { color: #ffbe33 !important; }
+    .custom_nav-container .navbar-nav .nav-item:hover .nav-link { color: #fff !important; }
+    .navbar-brand span { color: #ffbe33 !important; }
+    .user_option a, .user_option .user_link { color: #ffbe33 !important; }
+    .cart_link svg { fill: #ffbe33 !important; }
+    .cart-count { display: none !important; }
   </style>
 </head>
 <body>
 
   <!-- ── header ── -->
-  <header class="header_section" style="position:fixed;top:0;width:100%;z-index:999;">
+  <header class="header_section" style="position:fixed;top:0;width:100%;z-index:999;background:#0c0c0c;">
     <div class="container">
-      <nav class="navbar navbar-expand-lg custom_nav-container">
+      <nav class="navbar navbar-expand-lg custom_nav-container" style="background:transparent;">
         <a class="navbar-brand" href="index.html"><span>Feane</span></a>
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav mx-auto">
@@ -261,7 +269,7 @@
                   <g><g><path d="M215.04,389.55c-1.024-28.16-24.576-50.688-52.736-50.688c-29.696,1.536-52.224,26.112-51.2,55.296c1.024,28.16,24.064,50.688,52.224,50.688h1.024C193.536,443.31,216.576,418.734,215.04,389.55z"/></g></g>
                 </svg>
               </a>
-              <span id="cartBadge" style="display:none;position:absolute;top:-5px;right:-5px;width:8px;height:8px;background:#e74c3c;border-radius:50%;z-index:2;"></span>
+              
             </span>
             <a href="payment.html" class="order_online">Order Online</a>
           </div>

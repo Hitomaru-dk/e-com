@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 
 <head>
@@ -30,6 +29,43 @@
   <!-- responsive style -->
   <link href="css/responsive.css" rel="stylesheet" />
 
+<style>
+    /* search inline */
+    .search-inline {
+      display: flex; align-items: center;
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,190,51,0.4);
+      border-radius: 24px;
+      padding: 5px 14px;
+      margin: 0 10px;
+      transition: border-color .2s, background .2s;
+      min-width: 200px;
+    }
+    .search-inline:focus-within { border-color: #ffbe33; background: rgba(255,255,255,0.18); }
+    .search-icon-wrap { color: #ffbe33; font-size: 13px; margin-right: 8px; flex-shrink: 0; }
+    .search-inline .nav_search-input {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      color: #fff !important;
+      padding: 0 !important;
+      width: 150px;
+      font-size: 13px;
+      pointer-events: auto !important;
+      cursor: text !important;
+      z-index: 10;
+      position: relative;
+    }
+    .search-inline .nav_search-input::placeholder { color: rgba(255,255,255,0.5) !important; }
+    .search-inline .nav_search-input:focus { outline: none !important; }
+    .search-clear-btn {
+      background: none; border: none; color: rgba(255,255,255,0.5);
+      font-size: 18px; cursor: pointer; line-height: 1; padding: 0 0 0 6px; flex-shrink: 0;
+    }
+    .search-clear-btn:hover { color: #ffbe33; }
+    /* ป้องกัน custom.js block click บน search */
+    #searchDropdown * { pointer-events: auto !important; }
+  </style>
 </head>
 
 <body class="sub_page">
@@ -80,15 +116,12 @@
                     <g><g><path d="M215.04,389.55c-1.024-28.16-24.576-50.688-52.736-50.688c-29.696,1.536-52.224,26.112-51.2,55.296c1.024,28.16,24.064,50.688,52.224,50.688h1.024C193.536,443.31,216.576,418.734,215.04,389.55z"/></g></g>
                   </svg>
                 </a>
-                <span id="cartBadge" style="display:none;position:absolute;top:-5px;right:-5px;width:8px;height:8px;background:#e74c3c;border-radius:50%;z-index:2;"></span>
+                <span id="cartBadge" style="display:none;"></span>
               </span>
-              <form class="form-inline">
-                <button class="btn  my-2 my-sm-0 nav_search-btn" type="button" id="searchBtn">
-                  <i class="fa fa-search" aria-hidden="true"></i>
-                </button>
-              </form>
-              <div class="search-dropdown" id="searchDropdown" style="display: none;">
-                <input type="text" class="nav_search-input" id="searchInput" placeholder="Search products...">
+              <div class="search-inline" id="searchDropdown">
+                <span class="search-icon-wrap"><i class="fa fa-search"></i></span>
+                <input type="text" class="nav_search-input" id="searchInput" placeholder="Search menu...">
+                <button class="search-clear-btn" id="searchClearBtn" style="display:none;" title="Clear">×</button>
               </div>
               <a href="payment.html" class="order_online">Order Online</a>
             </div>
@@ -398,33 +431,37 @@ document.querySelector('.btn-box a').addEventListener('click', function(e) {
     renderProducts();
 });
 
-document.getElementById('searchBtn').addEventListener('click', function(e) {
-    e.stopPropagation();
-    const dropdown = document.getElementById('searchDropdown');
-    if (dropdown.style.display === 'none') {
-        dropdown.style.display = 'block';
-        document.getElementById('searchInput').focus();
-    } else {
-        searchProducts();
+// ── Search: inline always-visible ────────────────────────
+const searchInput    = document.getElementById('searchInput');
+const searchClearBtn = document.getElementById('searchClearBtn');
+
+// ป้องกัน custom.js intercepting click บน search box
+document.getElementById('searchDropdown').addEventListener('click', function(e) { e.stopPropagation(); });
+searchInput.addEventListener('click', function(e) { e.stopPropagation(); this.focus(); });
+searchInput.addEventListener('focus', function(e) { e.stopPropagation(); });
+
+searchInput.addEventListener('input', function() {
+    const val = this.value.trim();
+    searchClearBtn.style.display = val ? 'block' : 'none';
+    liveSearch();
+});
+
+searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        this.value = '';
+        searchClearBtn.style.display = 'none';
+        currentIndex = 0;
+        renderProducts();
     }
 });
 
-document.getElementById('searchDropdown').addEventListener('click', function(e) {
-    e.stopPropagation();
+searchClearBtn.addEventListener('click', function() {
+    searchInput.value = '';
+    this.style.display = 'none';
+    searchInput.focus();
+    currentIndex = 0;
+    renderProducts();
 });
-
-document.addEventListener('click', function() {
-    const dropdown = document.getElementById('searchDropdown');
-    dropdown.style.display = 'none';
-});
-
-document.getElementById('searchInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchProducts();
-    }
-});
-
-document.getElementById('searchInput').addEventListener('input', liveSearch);
 
 requestProducts();
 </script>
@@ -453,5 +490,3 @@ requestProducts();
   <script src="js/auth-nav.js"></script>
   <script src="js/cart.js"></script>
 </body>
-
-</html>

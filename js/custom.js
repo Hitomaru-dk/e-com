@@ -68,6 +68,7 @@ $(".client_owl-carousel").owlCarousel({
         }
     }
 });
+
 let cart = {};
 const CART_STORAGE_KEY = 'feaneCartItems';
 const CART_PANEL_ID = 'cartPanel';
@@ -122,9 +123,11 @@ function addToCart(product) {
         cart[product.id].quantity += 1;
     } else {
         cart[product.id] = {
-            title: product.title,
-            price: product.price,
-            image: product.image,
+            id:       product.id,
+            title:    product.title,
+            name:     product.title,   // payment.html ใช้ item.name
+            price:    product.price,
+            image:    product.image,
             quantity: 1
         };
     }
@@ -144,13 +147,17 @@ function setupStaticCartButtons() {
             const priceText = productCard.querySelector('.options h6')?.textContent.trim() || '';
             const image = productCard.querySelector('.img-box img')?.src || '';
             if (title) {
-                anchor.dataset.id = anchor.dataset.id || generateCartId(title);
+                anchor.dataset.id    = anchor.dataset.id    || generateCartId(title);
                 anchor.dataset.title = anchor.dataset.title || title;
                 anchor.dataset.price = anchor.dataset.price || priceText.replace(/[^0-9\.]/g, '');
                 anchor.dataset.image = anchor.dataset.image || image;
             }
         }
     });
+}
+
+function getCartTotal() {
+    return Object.values(cart).reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
 function createCartPanel() {
@@ -167,7 +174,10 @@ function createCartPanel() {
                 <div id="cartItemsList" class="cart-items-list"></div>
                 <div class="cart-panel-footer">
                     <div id="cartTotal" class="cart-total"></div>
-                    <button type="button" id="clearCartBtn" class="cart-clear">ลบทั้งหมด</button>
+                    <div style="display:flex;gap:8px;">
+                        <button type="button" id="clearCartBtn" class="cart-clear">ลบทั้งหมด</button>
+                        <button type="button" id="checkoutBtn" class="cart-checkout">💳 จ่ายตัง</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -186,7 +196,7 @@ function createCartPanel() {
         .cart-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 18px; border-bottom: 1px solid #eee; }
         .cart-panel-header h3 { margin: 0; font-size: 18px; }
         .cart-close { background: transparent; border: none; font-size: 24px; cursor: pointer; line-height: 1; }
-        .cart-items-list { max-height: calc(85vh - 180px); overflow-y: auto; padding: 16px; }
+        .cart-items-list { max-height: calc(85vh - 200px); overflow-y: auto; padding: 16px; }
         .cart-item { display: flex; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid #f0f0f0; padding-bottom: 12px; }
         .cart-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .cart-item img { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; }
@@ -195,20 +205,34 @@ function createCartPanel() {
         .cart-item-meta { font-size: 13px; color: #555; margin-bottom: 8px; }
         .cart-item-actions { display: flex; justify-content: space-between; align-items: center; }
         .remove-cart-item { background: transparent; border: none; color: #ff4c4c; cursor: pointer; font-size: 13px; }
-        .cart-panel-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; border-top: 1px solid #eee; }
-        .cart-total { font-weight: 600; }
-        .cart-clear { background: #ff6500; color: #fff; border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; }
+        .cart-panel-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; border-top: 1px solid #eee; flex-wrap: wrap; }
+        .cart-total { font-weight: 600; font-size: 15px; }
+        .cart-clear { background: #ff6500; color: #fff; border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-size: 13px; }
+        .cart-checkout { background: #ffbe33; color: #0c0c0c; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; transition: background .2s; }
+        .cart-checkout:hover { background: #e6a800; }
         .cart-empty { padding: 24px 16px; text-align: center; color: #444; }
     `;
     document.head.appendChild(style);
 
     document.getElementById('cartCloseBtn').addEventListener('click', closeCartPanel);
     document.querySelector(`#${CART_PANEL_ID} .cart-panel-backdrop`).addEventListener('click', closeCartPanel);
+
     document.getElementById('clearCartBtn').addEventListener('click', function() {
         cart = {};
         saveCart();
         renderCartPanel();
     });
+
+    // ── ปุ่มจ่ายตัง → ไปหน้า payment ──
+    document.getElementById('checkoutBtn').addEventListener('click', function() {
+        if (getCartItemCount() === 0) {
+            alert('ตะกร้าว่างอยู่! กรุณาเพิ่มสินค้าก่อนนะครับ');
+            return;
+        }
+        closeCartPanel();
+        window.location.href = 'payment.html';
+    });
+
     document.getElementById(CART_PANEL_ID).addEventListener('click', function(event) {
         const removeButton = event.target.closest('.remove-cart-item');
         if (!removeButton) return;
@@ -224,7 +248,7 @@ function createCartPanel() {
 function renderCartPanel() {
     const panel = document.getElementById(CART_PANEL_ID);
     if (!panel) return;
-    const list = document.getElementById('cartItemsList');
+    const list    = document.getElementById('cartItemsList');
     const totalEl = document.getElementById('cartTotal');
     if (!list || !totalEl) return;
 
@@ -232,8 +256,12 @@ function renderCartPanel() {
     if (items.length === 0) {
         list.innerHTML = '<div class="cart-empty">ตะกร้าว่างอยู่ ขณะนี้ยังไม่มีสินค้า</div>';
         totalEl.textContent = '';
+        // ซ่อนปุ่มจ่ายตัง ถ้าตะกร้าว่าง
+        document.getElementById('checkoutBtn').style.display = 'none';
         return;
     }
+
+    document.getElementById('checkoutBtn').style.display = 'inline-block';
 
     let total = 0;
     list.innerHTML = items.map(([id, item]) => {
@@ -241,17 +269,18 @@ function renderCartPanel() {
         total += subtotal;
         return `
             <div class="cart-item">
-                <img src="${item.image || 'images/f1.png'}" alt="${item.title}">
+                <img src="${item.image || 'images/f1.png'}" alt="${item.title}" onerror="this.src='images/f1.png'">
                 <div class="cart-item-info">
                     <div class="cart-item-title">${item.title}</div>
-                    <div class="cart-item-meta">ราคา ${item.price.toFixed(2)} x ${item.quantity} = ${(subtotal).toFixed(2)}</div>
+                    <div class="cart-item-meta">฿${item.price.toFixed(2)} × ${item.quantity} = ฿${subtotal.toFixed(2)}</div>
                     <div class="cart-item-actions">
                         <button type="button" class="remove-cart-item" data-id="${id}">ลบ</button>
                     </div>
                 </div>
             </div>`;
     }).join('');
-    totalEl.textContent = `รวม ${total.toFixed(2)} USD | ${getCartItemCount()} ชิ้น`;
+
+    totalEl.textContent = `รวม ฿${total.toFixed(2)} | ${getCartItemCount()} ชิ้น`;
 }
 
 function openCartPanel() {
@@ -280,7 +309,7 @@ function handleAddToCartButton(addButton) {
     addToCart(product);
 }
 
-// Global event delegation for add-to-cart buttons and cart icon
+// Global event delegation
 document.body.addEventListener('click', function(event) {
     const addButton = event.target.closest('.add-to-cart');
     if (addButton) {
@@ -288,7 +317,6 @@ document.body.addEventListener('click', function(event) {
         handleAddToCartButton(addButton);
         return;
     }
-
     const cartButton = event.target.closest('.cart_link');
     if (cartButton) {
         event.preventDefault();
@@ -297,9 +325,7 @@ document.body.addEventListener('click', function(event) {
 });
 
 window.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeCartPanel();
-    }
+    if (event.key === 'Escape') closeCartPanel();
 });
 
 if (document.readyState === 'loading') {

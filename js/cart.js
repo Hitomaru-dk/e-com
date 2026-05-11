@@ -1,48 +1,67 @@
 /**
  * cart.js — Global cart state manager
- * Used by all pages: add/remove items, get count, get total
- * Cart stored in localStorage as 'feane_cart'
+ * ── key: 'feaneCartItems'  (object format, ตรงกับ custom.js)
+ * ── ทุกหน้าใช้ไฟล์นี้เป็น source of truth
  */
 
 const Cart = {
+
+  // ── Read ────────────────────────────────────────────────
+  _raw() {
+    const stored = localStorage.getItem('feaneCartItems');
+    return stored ? JSON.parse(stored) : {};
+  },
+
+  /** คืน array ของ items (ใช้ใน payment.html) */
   get() {
-    return JSON.parse(localStorage.getItem('feane_cart') || '[]');
+    return Object.values(this._raw());
   },
-  save(items) {
-    localStorage.setItem('feane_cart', JSON.stringify(items));
-    Cart.updateBadge();
+
+  // ── Write ───────────────────────────────────────────────
+  _save(obj) {
+    localStorage.setItem('feaneCartItems', JSON.stringify(obj));
+    this.updateBadge();
   },
+
   add(product) {
-    const items = Cart.get();
-    const idx = items.findIndex(i => i.id === product.id);
-    if (idx > -1) {
-      items[idx].quantity += 1;
+    const cart = this._raw();
+    const key  = String(product.id);
+    if (cart[key]) {
+      cart[key].quantity += 1;
     } else {
-      items.push({ ...product, quantity: 1 });
+      cart[key] = { ...product, quantity: 1 };
     }
-    Cart.save(items);
+    this._save(cart);
   },
+
   remove(productId) {
-    Cart.save(Cart.get().filter(i => i.id !== productId));
+    const cart = this._raw();
+    delete cart[String(productId)];
+    this._save(cart);
   },
+
   clear() {
-    localStorage.removeItem('feane_cart');
-    Cart.updateBadge();
+    localStorage.removeItem('feaneCartItems');
+    this.updateBadge();
   },
+
+  // ── Aggregates ──────────────────────────────────────────
   count() {
-    return Cart.get().reduce((s, i) => s + i.quantity, 0);
+    return this.get().reduce((s, i) => s + i.quantity, 0);
   },
+
   total() {
-    return Cart.get().reduce((s, i) => s + i.price * i.quantity, 0);
+    return this.get().reduce((s, i) => s + i.price * i.quantity, 0);
   },
+
+  // ── Badge ───────────────────────────────────────────────
   updateBadge() {
     const badge = document.getElementById('cartBadge');
     if (!badge) return;
-    const n = Cart.count();
-    badge.textContent = n;
+    const n = this.count();
+    badge.textContent  = n;
     badge.style.display = n > 0 ? 'flex' : 'none';
   }
 };
 
-// Update badge on page load
 document.addEventListener('DOMContentLoaded', () => Cart.updateBadge());

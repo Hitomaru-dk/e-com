@@ -3,6 +3,8 @@
  * ทุก route ยังคง URL เดิม — frontend ไม่ต้องแก้ไขอะไร
  */
 
+require('dotenv').config();
+
 const express        = require('express');
 const cors           = require('cors');
 const productRoutes  = require('./routes/products');
@@ -10,7 +12,7 @@ const authRoutes     = require('./routes/auth');
 const checkoutRoutes = require('./routes/checkout');
 
 const app  = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 require('./database'); // init SQLite tables on startup
 
